@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 
 #Step 1 and 2:
-def non_uniform_illumination(original_img, kernel_size, brightness):    
+def non_uniform_illumination(original_img, brightness):    
     # Step 1:
     # Check if brightness parameter is valid
     if brightness == 'bright':
@@ -18,7 +18,7 @@ def non_uniform_illumination(original_img, kernel_size, brightness):
     gc_img = pow(original_img, beta)*alpha
     
     # Apply Gaussian Blur to create I0
-    blurred_img = cv.GaussianBlur(gc_img, kernel_size, sigmaX=0, sigmaY=0, borderType=cv.BORDER_DEFAULT)
+    blurred_img = cv.GaussianBlur(gc_img, (3,3), sigmaX=0, sigmaY=0, borderType=cv.BORDER_DEFAULT)
     
     # Step 2:
     # Normalize the blurred image I0 to range [0, 1]
@@ -30,7 +30,7 @@ def non_uniform_illumination(original_img, kernel_size, brightness):
     avg_pixel_value_I0 = np.mean(blurred_img)
     scaling_factor = avg_pixel_value_I / avg_pixel_value_I0
     
-    # Adjust pixel value of I0 to the same as I to create adjusted_I0 (IM0)
+    # Adjust the average pixel value of I0 to the same as I to create adjusted_I0 (IM0)
     adjusted_I0 = blurred_img*scaling_factor
     
     # Calculate the contrast-adjusted image I1 = 2*IM0 - I0
@@ -64,9 +64,9 @@ def add_gaussian_noise(img):
 if __name__ == '__main__':
     
     img_path = './sample.bmp'
-    img = cv.imread(filename=img_path, flags=cv.IMREAD_UNCHANGED)
-    bright_img = non_uniform_illumination(original_img=img, kernel_size=(3,3), brightness='bright')
-    dark_img = non_uniform_illumination(original_img=img, kernel_size=(3,3), brightness='dark')
+    img = cv.imread(filename=img_path, flags=cv.IMREAD_GRAYSCALE)
+    bright_img = non_uniform_illumination(original_img=img, brightness='bright')
+    dark_img = non_uniform_illumination(original_img=img, brightness='dark')
     noisy_img = add_gaussian_noise(dark_img)
 
     cv.imshow('Image', img)
