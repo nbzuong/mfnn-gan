@@ -37,7 +37,7 @@ def infer(image):
     return fake_image
 
 # Streamlit app
-st.title("Pix2PixHD Image Transformation")
+st.title("Finger-Vein Image Restoration")
 
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png", "bmp"])
 if uploaded_file is not None:
@@ -50,12 +50,13 @@ if uploaded_file is not None:
     fake_image = (fake_image - fake_image.min()) / (fake_image.max() - fake_image.min())  # Normalize to [0, 1]
     fake_image = (fake_image * 255).astype(np.uint8)
     fake_image_pil = Image.fromarray(fake_image)
+    fake_image_pil = fake_image_pil.resize((180, 70))
 
     # Display side by side images
     col1, col2 = st.columns(2)
 
     with col1:
-        st.header("Uploaded Image")
+        st.header("Noisy Image")
         st.image(image, use_column_width=True)
 
     with col2:
